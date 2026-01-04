@@ -1,19 +1,16 @@
-import { createState, With, onCleanup } from "ags";
-import app from "ags/gtk3/app";
-import { Gtk, Astal } from "ags/gtk3";
+import { onCleanup } from "ags";
+import app from "ags/gtk4/app";
+import { Gtk, Astal } from "ags/gtk4";
 import CenterWidgets from "../CenterWidgets";
 import Playback from "./Playback";
 import Network from "./Network";
-import SysTray from "./SysTray";
-import QuickSettings from "./QuickSettings";
 import Hardware from "./Hardware";
-import Avatar from "./Avatar";
+import SysTray from "./SysTray";
 import niri from "../../support/niri";
 import { applyOpacityTransition } from "../../support/transitions";
 import { getDisplayId, getBarMargins } from "../../support/util";
 
 export default ({ monitor }: { monitor: number }) => {
-  const [showQuickSettings, setShowQuickSettings] = createState(false);
 
   const LeftModules = (
     <box spacing={8} halign={Gtk.Align.START} $type="start">
@@ -36,29 +33,9 @@ export default ({ monitor }: { monitor: number }) => {
         margin-right: 4px;
       `}
     >
+      <Hardware />
+      <Network />         
       <SysTray />
-      <box>
-        <box>
-          <revealer
-            revealChild={showQuickSettings((isOpen) => !isOpen)}
-            transitionType={Gtk.RevealerTransitionType.SLIDE_RIGHT}
-            transitionDuration={300}
-          >
-            <box spacing={8}>
-              <Network />
-              <Hardware />
-            </box>
-          </revealer>
-          <revealer
-            revealChild={showQuickSettings}
-            transitionType={Gtk.RevealerTransitionType.SLIDE_LEFT}
-            transitionDuration={300}
-          >
-            <QuickSettings />
-          </revealer>
-        </box>
-      </box>
-      <Avatar onToggle={() => setShowQuickSettings((prev) => !prev)} />
     </box>
   );
 

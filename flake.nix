@@ -20,29 +20,23 @@
 
     astalPackages = with ags.packages.${system}; [
       io
-      astal3
+      astal4
       battery
       apps
       mpris
       network
       tray
-      wireplumber
     ];
 
     extraPackages =
       astalPackages
       ++ (with pkgs; [
-        gnome-weather
-        gnome-calendar
-        mission-center
         curl
-        systemd
-        libgtop
-        brightnessctl
-        libadwaita
         libsoup_3
         gjs
         glib
+        gjs
+        gtk4
       ]);
 
     agsCustom = (
@@ -69,13 +63,11 @@
         buildInputs = extraPackages;
         installPhase = ''
           runHook preInstall
-
-           mkdir -p $out/bin
-           mkdir -p $out/share
-           cp -r * $out/share
-           ags bundle --gtk 3 ${entry} $out/bin/${pname} -d "SRC='$out/share'"
-
-           runHook postInstall
+          mkdir -p $out/bin
+          mkdir -p $out/share
+          cp -r * $out/share
+          ags bundle  ${entry} $out/bin/${pname} -d "SRC='$out/share'"
+          runHook postInstall
         '';
       };
     };

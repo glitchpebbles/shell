@@ -1,4 +1,4 @@
-import { Gtk } from "ags/gtk3";
+import { Gtk } from "ags/gtk4";
 import { createBinding, For } from "ags";
 import niri from "../../../support/niri";
 import { getCurrentTheme } from "../../../support/theme";
@@ -26,7 +26,7 @@ export default () => {
               border: none;
               min-width: 6px;
               min-height: 24px;
-              border-radius: ${theme.borderRadius.small};
+              border-radius: 2px;
               background-color: ${
                 focused ? theme.accent.primary : theme.accent.secondary
               };

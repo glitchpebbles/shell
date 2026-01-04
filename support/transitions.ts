@@ -1,5 +1,4 @@
 import GLib from "gi://GLib";
-import Gtk from "gi://Gtk";
 
 export interface TransitionOptions {
   fadeInDuration?: number;

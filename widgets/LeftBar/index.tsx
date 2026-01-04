@@ -1,5 +1,5 @@
-import { Gtk, Astal } from "ags/gtk3";
-import app from "ags/gtk3/app";
+import { Gtk, Astal } from "ags/gtk4";
+import app from "ags/gtk4/app";
 import WorkspaceIndicator from "./WorkspaceIndicator";
 import niri from "../../support/niri";
 import { applyOpacityTransition } from "../../support/transitions";
@@ -23,7 +23,7 @@ export default ({ monitor }: { monitor: number }) => {
       `}
     >
       <box
-        vertical
+        orientation={Gtk.Orientation.VERTICAL}
         valign={Gtk.Align.CENTER}
         vexpand={true}
       >

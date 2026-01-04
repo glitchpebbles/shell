@@ -1,6 +1,6 @@
 import { exec } from "ags/process";
 import { readFile, writeFile, monitorFile } from "ags/file";
-import app from "ags/gtk3/app";
+import app from "ags/gtk4/app";
 import Battery from "gi://AstalBattery";
 import GLib from "gi://GLib";
 import Gdk from "gi://Gdk";
@@ -62,31 +62,17 @@ export const hasBattery = (() => {
   }
 })();
 
-export function getDisplayId(monitor: number): string {
-  try {
-    // Try to get monitor information from GTK
-    const display = Gdk.Display.get_default();
-    if (display) {
-      const monitorObj = display.get_monitor(monitor);
-      if (monitorObj) {
-        // In GJS, GObject properties are accessed directly, not through getter methods
-        // Try different properties that might contain the display identifier
-        if (monitorObj.connector) return monitorObj.connector;
-        if (monitorObj.model) return monitorObj.model;
-        if (monitorObj.manufacturer) return monitorObj.manufacturer;
+export function getDisplayId(monitorIndex: number): string | null {
+  const display = Gdk.Display.get_default();
+  if (!display) return null;
 
-        // Try alternative property names that might be used in GJS
-        if (monitorObj.output) return monitorObj.output;
-        if (monitorObj.name) return monitorObj.name;
-      }
-    }
-  } catch (error) {
-    console.warn("Failed to get display ID:", error);
-  }
+  const monitor = display.get_monitors().get_item(monitorIndex);
 
-  // Fallback to monitor number as string
-  return `monitor_${monitor}`;
+  if (!monitor) return null;
+
+  return monitor.get_connector(); 
 }
+
 
 const DISPLAYS_CONFIG_PATH = `${GLib.get_home_dir()}/.config/astal-shell/displays.json`;
 
@@ -123,13 +109,11 @@ export function getAllDisplays(): Record<string, [number, number]> {
 }
 
 export function initializeDisplaysConfig(): void {
-  // Check if file already exists
   try {
     if (readFile(DISPLAYS_CONFIG_PATH) !== "") {
-      return; // File already exists, don't overwrite
+      return;
     }
   } catch (e) {
-    // File doesn't exist, continue with initialization
   }
 
   // Create config directory if it doesn't exist

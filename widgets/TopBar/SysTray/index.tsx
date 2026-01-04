@@ -1,3 +1,4 @@
+import Gtk from "gi://Gtk";
 import Tray from "gi://AstalTray";
 import { createBinding, For } from "ags";
 
@@ -6,37 +7,64 @@ export default () => {
   const items = createBinding(tray, "items");
 
   return (
-    <box class="SysTray" spacing={8}>
+    <box 
+      spacing={8}
+      css="background-color: transparent;"
+    >
       <For each={items}>
         {(item: any) => {
           const tooltipMarkup = createBinding(item, "tooltipMarkup");
-          const menuModel = createBinding(item, "menuModel");
           const gicon = createBinding(item, "gicon");
 
           return (
-            <menubutton
+            <button
               tooltipMarkup={tooltipMarkup}
-              usePopover={false}
-              menuModel={menuModel}
               css={`
                 padding: 0;
                 margin: 0;
-                background: none;
+                
+                background-color: transparent;
+                background-image: none;
+                border: none;
+                box-shadow: none;
+                
+                min-width: 0;
+                min-height: 0;
+                border-radius: 0;
               `}
               $={(self) => {
                 self.insert_action_group("dbusmenu", item.actionGroup);
                 item.connect("notify::action-group", () => {
                   self.insert_action_group("dbusmenu", item.actionGroup);
                 });
+
+                const popover = new Gtk.PopoverMenu();
+                
+                popover.set_parent(self);
+
+                const updateMenu = () => {
+                  popover.set_menu_model(item.menuModel);
+                };
+                
+                item.connect("notify::menu-model", updateMenu);
+                updateMenu();
+
+                self.connect("clicked", () => {
+                  if (item.menuModel) {
+                    popover.popup();
+                  }
+                });
               }}
             >
-              <icon
+              <image
                 gicon={gicon}
                 css={`
                   font-size: 18px;
+                  min-width: 0;
+                  min-height: 0;
                 `}
               />
-            </menubutton>
+            </button>
           );
         }}
       </For>

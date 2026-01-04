@@ -1,7 +1,7 @@
 import Mpris from "gi://AstalMpris";
-import { createBinding, createState, For } from "ags";
+import { createBinding, For } from "ags";
 import Pango from 'gi://Pango';
-import { Gtk } from "ags/gtk3";
+import { Gtk } from "ags/gtk4";
 import { getCurrentTheme } from "../../../support/theme";
 
 // TODO: Automatically pause multiple playing things
@@ -23,8 +23,7 @@ function PlayPauseButton({ player }) {
       onClicked={() => player.play_pause()}
       visible={canPlay}
     >
-      <icon
-        icon={playbackStatus((s) => {
+      <image iconName={playbackStatus((s) => {
           switch (s) {
             case Mpris.PlaybackStatus.PLAYING:
               return "media-playback-pause-symbolic";
@@ -39,7 +38,6 @@ function PlayPauseButton({ player }) {
 }
 
 const Player = (player) => {
-  const [isHovering, setIsHovering] = createState(false);
   const coverArt = createBinding(player, "coverArt");
   const artist = createBinding(player, "artist");
   const title = createBinding(player, "title");
@@ -47,10 +45,7 @@ const Player = (player) => {
 
   return (
     <box>
-      <eventbox
-        onHover={() => setIsHovering(true)}
-        onHoverLost={() => setIsHovering(false)}
-      >
+      <box>
         <overlay>
           <box
             class="artwork-container"
@@ -79,17 +74,12 @@ const Player = (player) => {
             $type="overlay"
             halign={Gtk.Align.CENTER}
             valign={Gtk.Align.CENTER}
-            css={isHovering(
-              (hovering) => `
-              opacity: ${hovering ? 1 : 0};
-            `
-            )}
-            visible={isHovering}
+            css={"opacity: 1"}
           >
             <PlayPauseButton player={player} />
           </box>
         </overlay>
-      </eventbox>
+      </box>
 
       <box
         orientation={Gtk.Orientation.VERTICAL}
@@ -130,7 +120,7 @@ const Player = (player) => {
         onClicked={() => player.next()}
         visible={canGoNext}
       >
-        <icon icon={"media-skip-forward-symbolic"} />
+        <image iconName={"media-skip-forward-symbolic"} />
       </button>
     </box>
   );
